@@ -17,8 +17,6 @@ RUN sed -i -e 's/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g' ${php_conf} && echo "
  
 COPY content/supervisord.conf ${supervisor_conf}
  
-VOLUME ["/etc/nginx/sites-enabled", "/etc/nginx/certs", "/etc/nginx/conf.d", "/var/log/nginx", "/var/www/html"]
-
 COPY content/index.html /var/www/html/index.html
 COPY content/score.php /var/www/html/cgi-bin/score.php
 COPY content/lock.txt /var/www/html/cgi-bin/lock.txt
