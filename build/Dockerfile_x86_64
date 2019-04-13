@@ -19,6 +19,7 @@ COPY content/supervisord.conf ${supervisor_conf}
  
 COPY content/index.html /var/www/html/index.html
 COPY content/score.php /var/www/html/cgi-bin/score.php
+COPY content/revert_mac.sh /var/www/html/cgi-bin/revert_mac.sh
 COPY content/lock.txt /var/www/html/cgi-bin/lock.txt
 COPY content/koth_ap.sh /var/www/html/cgi-bin/koth_ap.sh
 COPY content/www.conf /etc/php/7.0/fpm/pool.d/www.conf
