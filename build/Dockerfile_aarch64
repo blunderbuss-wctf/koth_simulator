@@ -3,15 +3,15 @@ FROM ubuntu:16.04
 RUN apt-get update
 RUN apt-get install -y apt-utils wireless-tools
 RUN apt-get install -y nginx php7.0-fpm supervisor
-RUN apt-get install -y nano macchanger dnsmasq hostapd net-tools
+RUN DEBIAN_FRONTEND='noninteractive' apt-get install -y nano macchanger dnsmasq hostapd net-tools
 
 RUN rm -rf /var/lib/apt/lists/*
- 
+
 ENV nginx_vhost /etc/nginx/sites-available/default
 ENV php_conf /etc/php/7.0/fpm/php.ini
 ENV nginx_conf /etc/nginx/nginx.conf
 ENV supervisor_conf /etc/supervisor/supervisord.conf
- 
+
 COPY content/default ${nginx_vhost}
 RUN sed -i -e 's/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g' ${php_conf} && echo "\ndaemon off;" >> ${nginx_conf}
  
@@ -29,6 +29,7 @@ RUN mkdir -p /run/php && \
 
 COPY content/start.sh /start.sh
 RUN chmod 755 /start.sh
-CMD ["./start.sh"]
+ENTRYPOINT ["/start.sh"]
+CMD []
  
 EXPOSE 80 443

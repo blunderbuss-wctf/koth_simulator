@@ -107,8 +107,8 @@ function start_ap() {
     HW_MODE=g
     `iwlist $INTERFACE freq | grep -E "Channel.*: 5\." > /dev/null`
     if [[ $? -eq 0 ]]; then
-        # Just use the common channels from 802.11a
-        CHANNELS="${CHANNELS} 36 40 44 48"
+        # Just use some channels from 802.11a
+        CHANNELS="${CHANNELS} 36 40 44"
     fi
 
     CHANNEL=$(shuf -n 1 -e $CHANNELS)
