@@ -2,6 +2,7 @@
 
 KOTH_SSID="WCTF_KingOfTheHill"
 KOTH_IP="172.16.100.1"
+KOTH_SCOREBOARD="<not set>"
 
 MAGENTA='\e[0;35m'
 RED='\e[0;31m'
@@ -19,6 +20,7 @@ DOCKER_BUILDFILE=
 DOCKER_NAME=
 DOCKER_IMAGE="koth_simulation"
 CONF_FILE="wlan_config.txt"
+TARGET_SCORE=/var/www/html/cgi-bin/teams.txt
 
 clear
 
@@ -139,27 +141,28 @@ function init() {
     # Check if a wlan config file exists, else take wlan parameters by default
     if [ -e "$CONF_FILE" ]
     then
-        echo -e "${BLUE}[INFO]${NC} Found WLAN config file"
+        echo -e "${BLUE}[INFO]${NC} Found WLAN config file: $CONF_FILE"
         # Parse the wlan config file
         IFS="="
         while read -r name value; do
             case $name in
                 ''|\#* ) continue;;
                 "KOTH_SSID" )
-                    KOTH_SSID=${value//\"/}
-                    echo -e "${BLUE}"[INFO]"${NC}" SSID: "${MAGENTA}""$KOTH_SSID""${NC}";;
+                    KOTH_SSID=${value//\"/};;
                 "KOTH_IP" )
-                    KOTH_IP=${value//\"/}
-                    echo -e "${BLUE}"[INFO]"${NC}" SSID: "${MAGENTA}""$KOTH_IP""${NC}";;
+                    KOTH_IP=${value//\"/};;
+                "KOTH_SCOREBOARD" )
+                    KOTH_SCOREBOARD=${value//\"/};;
                 * )
-                    echo Parameter "$name" in "$CONF_FILE" not recognized
+                    echo -e "Parameter $name in $CONF_FILE not recognized"
             esac
         done < "$CONF_FILE"
-    else
-        echo -e "${BLUE}[INFO]${NC} WLAN config file not found. Setting default WLAN parameters"
-        echo -e "${BLUE}"[INFO]"${NC}" SSID: "${MAGENTA}""$KOTH_SSID""${NC}"
-        echo -e "${BLUE}"[INFO]"${NC}" IP: "${MAGENTA}""$KOTH_IP""${NC}"
     fi
+
+    echo -e "${BLUE}[INFO]${NC} WLAN parameters:"
+    echo -e "${BLUE}[INFO]${NC} SSID: ${MAGENTA}$KOTH_SSID${NC}"
+    echo -e "${BLUE}[INFO]${NC} IP: ${MAGENTA}$KOTH_IP${NC}"
+    echo -e "${BLUE}[INFO]${NC} SCOREBOARD: ${MAGENTA}$KOTH_SCOREBOARD${NC}"
 
     # Avoid cross-device link error with building?
     if [[ -e /sys/module/overlay/parameters/metacopy ]]
@@ -182,7 +185,19 @@ function start() {
     ip link set $IFACE up
 
     echo -e "[+] Starting the docker container with name ${GREEN}$DOCKER_NAME${NC}"
-    docker run -dt --name $DOCKER_NAME --net=bridge --cap-add=NET_ADMIN --cap-add=NET_RAW $DOCKER_IMAGE $IFACE $KOTH_SSID $KOTH_IP &> /dev/null
+
+    if [[ $KOTH_SCOREBOARD != "<not set>" ]]
+    then
+        docker run -dt --name $DOCKER_NAME --net=bridge --cap-add=NET_ADMIN --cap-add=NET_RAW -v ${KOTH_SCOREBOARD}:${TARGET_SCORE} $DOCKER_IMAGE $IFACE $KOTH_SSID $KOTH_IP
+    else
+        docker run -dt --name $DOCKER_NAME --net=bridge --cap-add=NET_ADMIN --cap-add=NET_RAW $DOCKER_IMAGE $IFACE $KOTH_SSID $KOTH_IP
+    fi
+
+    if [[ $? -ne 0 ]]
+    then
+        echo -e "${RED}[ERROR]${NC} Error running ${GREEN}$DOCKER_NAME${NC}. Exiting!"
+        exit 1
+    fi
 
     local pid=$(docker inspect -f '{{.State.Pid}}' $DOCKER_NAME)
     local phy=$(cat /sys/class/net/$IFACE/phy80211/name)

@@ -105,7 +105,7 @@ Do you want to play a game...
 # Display Team Score
 To run a continuous display of the team scores just run the following outside the running docker instance.
 ```
-> watch "docker exec -it -t koth cat /var/www/html/cgi-bin/fake_aps.txt | sort | uniq -c"
+> watch "docker exec -it -t koth cat /var/www/html/cgi-bin/teams.txt | sort | uniq -c"
 
       2 blunderbuss
       1 others

@@ -4,7 +4,7 @@ $fp = fopen("lock.txt", "r+");
 
 if (flock($fp, LOCK_EX)) {
 
-   file_put_contents("fake_aps.txt", $_GET['team_name']."\n", FILE_APPEND | LOCK_EX);
+   file_put_contents("teams.txt", $_GET['team_name']."\n", FILE_APPEND | LOCK_EX);
 
 $t = <<<EX
 <html>
