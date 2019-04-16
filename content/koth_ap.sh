@@ -130,15 +130,15 @@ EOF
     ifconfig $INTERFACE down
     ip addr flush dev $INTERFACE
 
-    macchanger -A $INTERFACE >> $BASE_DIR/log/hostapd.log
+    macchanger -A $INTERFACE
 
     ifconfig $INTERFACE inet6 add $IP
     ifconfig $INTERFACE $IP netmask 255.255.0.0
     ifconfig $INTERFACE up $IP
     sleep 2
 
-    echo "Starting hostapd ($INTERFACE) on channel $CHANNEL" >> $BASE_DIR/log/hostapd.log
-    hostapd $BASE_DIR/conf/${INTERFACE}_ap.conf -B -P $REAL_AP_PID_FILE -t -f $BASE_DIR/log/hostapd.log &>> $BASE_DIR/log/hostapd.log
+    echo "Starting hostapd ($INTERFACE) on channel $CHANNEL"
+    hostapd $BASE_DIR/conf/${INTERFACE}_ap.conf -B -P $REAL_AP_PID_FILE -t
 }
 
 COMMAND=$1
