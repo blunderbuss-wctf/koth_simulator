@@ -60,8 +60,8 @@ function start_dnsmasq() {
     PID_FILE=$BASE_DIR/pidfiles/dhcp.pid
 
     if [[ -f "$PID_FILE" ]]; then
-	echo "dnsmasq instance already running on $INTERFACE. Not starting another one."
-	exit 2
+        echo "dnsmasq instance already running on $INTERFACE. Not starting another one."
+        exit 2
     fi
 
     mkdir $BASE_DIR/conf 2> /dev/null
@@ -95,8 +95,8 @@ function start_ap() {
     REAL_AP_PID_FILE=$BASE_DIR/pidfiles/${INTERFACE}_ap.pid
 
     if [[ -f "$REAL_AP_PID_FILE" ]]; then
-	echo "${INTERFACE} already has a running real ap. Exiting."
-	exit 2
+        echo "${INTERFACE} already has a running real ap. Exiting."
+        exit 2
     fi
 
     mkdir $BASE_DIR/conf 2> /dev/null
@@ -145,10 +145,10 @@ COMMAND=$1
 if [[ $COMMAND == "start" ]]; then
 
     if [ "$#" -ne 4 ]; then
-	echo "Illegal number of start parameters."
-	echo
-	usage
-	exit 1
+        echo "Illegal number of start parameters."
+        echo
+        usage
+        exit 1
     fi
 
     INTERFACE=$2
@@ -160,10 +160,10 @@ if [[ $COMMAND == "start" ]]; then
 elif [[ $COMMAND == "stop" ]]; then
 
     if [ "$#" -ne 2 ]; then
-	echo "Illegal number of stop parameters."
-	echo
-	usage
-	exit 1
+        echo "Illegal number of stop parameters."
+        echo
+        usage
+        exit 1
     fi
 
     INTERFACE=$2
@@ -172,10 +172,10 @@ elif [[ $COMMAND == "stop" ]]; then
 elif [[ $COMMAND == "restart" ]]; then
 
     if [ "$#" -ne 4 ]; then
-	echo "Illegal number of restart parameters."
-	echo
-	usage
-	exit 1
+        echo "Illegal number of restart parameters."
+        echo
+        usage
+        exit 1
     fi
 
     INTERFACE=$2
