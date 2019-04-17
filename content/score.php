@@ -9,6 +9,8 @@ if (flock($fp, LOCK_EX)) {
 
    file_put_contents("teams.txt", $_GET['team_name']."\n", FILE_APPEND | LOCK_EX);
 
+   $scores = nl2br(shell_exec("cat teams.txt | sort | uniq -c"));
+
 $t = <<<EX
 <html>
 <head>
@@ -24,6 +26,11 @@ The following team has scored:
 <br>
 Locking Access Point
 </center>
+<br>
+<br>
+<br>
+<h2 style="font-family:Courier New;">Team Scores:</h2>
+<h2>$scores</h2>
 </body>
 </html>
 EX;
