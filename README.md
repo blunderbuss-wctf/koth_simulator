@@ -61,9 +61,15 @@ Aside from only presently supporting a few hosts, the selected nic to use for th
 iw phy phy<#> info | grep set_wiphy_netns 
 ```
 
+# Configuring the build
+The <i>wlan_config.txt</i> file allows a few runtime parameters to be set during the build. All parameters are optional with the build providing sensible defaults otherwise:
+* KOTH_SSID: The broadcasted ssid of the KOTH ap. Defaults to WCTF_KingOfTheHill
+* KOTH_IP: The landing address for team scoring. Defaults to 172.16.100.1
+* KOTH_SCOREBOARD: An absolute path to a file which holds the scoreboard. The supplied file is bind mounted inside the container which will persist beyond the lifetime of the container. The file will exist at <i>/var/www/html/cgi-bin/teams.txt</i> inside the container. If this value is not set then scores will still be recorded to <i>/var/www/html/cgi-bin/teams.txt</i> however all scores will be <b>lost</b> once the container is stopped.
+
 # Running
 
-The <i>run.sh</i> script is all that is needed to start and stop the simulation. To start the simulation:
+The <i>run.sh</i> script is all that is needed to start and stop the simulation. The very first run can take some time as the initial docker image is being built.
 ```
 #./run.sh start wlan0
 
@@ -103,7 +109,9 @@ Do you want to play a game...
 ```
 
 # Display Team Score
-To run a continuous display of the team scores just run the following outside the running docker instance.
+As a team competing to score, once you've submitted your team name you'll get a response page which will acknowledge that the KOTH ap is being locked and also return all the team scores. 
+
+As an administrator of the KOTH game you can run a continuous display of the team scores by running the following command on your host. Or if you've decided to use the KOTH_SCOREBOARD config option you can just sort that file directly on your host.
 ```
 > watch "docker exec -it -t koth_wlan0 cat /var/www/html/cgi-bin/teams.txt | sort | uniq -c"
 
@@ -112,7 +120,7 @@ To run a continuous display of the team scores just run the following outside th
 ```
 
 # Handy Docker Commands
-* docker exec -it -t koth /bin/bash
+* docker exec -it -t koth_wlan0 /bin/bash
 * docker ps -a
 * docker images
 * docker rmi <image id>
