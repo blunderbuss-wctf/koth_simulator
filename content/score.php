@@ -3,6 +3,9 @@
 $fp = fopen("lock.txt", "r+");
 
 if (flock($fp, LOCK_EX)) {
+   // Setting this header instructs Nginx to disable fastcgi_buffering and disable
+   // gzip for this request... data gets sent back to the user right away
+   header('X-Accel-Buffering: no');
 
    file_put_contents("teams.txt", $_GET['team_name']."\n", FILE_APPEND | LOCK_EX);
 
@@ -25,11 +28,14 @@ Locking Access Point
 </html>
 EX;
 
-    exec("COMMAND");
-
-    flock($fp, LOCK_UN);
     echo $t;
+    ob_flush();
+    flush();
+
+    exec("supervisorctl stop koth:*");
+    sleep(100); // just trying to sleep long enough for everything to be stopped yet not have another team score
 }
+
 fclose($fp);
 
 ?>

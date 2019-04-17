@@ -21,8 +21,11 @@ COPY content/index.html /var/www/html/index.html
 COPY content/score.php /var/www/html/cgi-bin/score.php
 COPY content/revert_mac.sh /var/www/html/cgi-bin/revert_mac.sh
 COPY content/lock.txt /var/www/html/cgi-bin/lock.txt
-COPY content/koth_ap.sh /var/www/html/cgi-bin/koth_ap.sh
+COPY content/ap.sh /var/www/html/cgi-bin/ap.sh
+COPY content/dnsmasq.sh /var/www/html/cgi-bin/dnsmasq.sh
 COPY content/www.conf /etc/php/7.0/fpm/pool.d/www.conf
+
+RUN mkdir -p /var/www/html/cgi-bin/log
 
 RUN mkdir -p /run/php && \
     chown -R www-data:www-data /var/www/html && \
