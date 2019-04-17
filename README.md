@@ -1,6 +1,6 @@
 # WCTF KOTH Game
 
-The Wireless Village hosts a King of the Hill (KOTH) competition which forces teams to submit their team name to the WCTF_KingOfTheHill AP as many times as possible. With each successful submission the AP becomes locked for 60 seconds at which time no team can score. Once the 60 seconds have expired the AP becomes active again at which time all teams compete again to score.
+The Wireless Village hosts a King of the Hill (KOTH) competition which forces teams to submit their team name to the WCTF_KingOfTheHill AP as many times as possible. With each successful submission the AP becomes locked for 60 seconds at which time no team can submit their team name and score. Once the 60 seconds have expired the AP becomes active again at which time all teams compete again to score.
 
 Upon connecting to the WCTF_KingOfTheHill AP teams need to obtain a DHCP lease, then navigate to 172.16.100.1 (this IP has been known to change with each con) and submit their team name. Submitting the team name logs the team's success! Weighted points are awarded to the teams with successful submissions at the conclusion of the WCTF; as long as there is a minimum of 30 submissions the points are awared. Oh, and this challenge does not sleep when they close the doors for the night.
 
@@ -65,7 +65,7 @@ iw phy phy<#> info | grep set_wiphy_netns
 
 The <i>run.sh</i> script is all that is needed to start and stop the simulation. To start the simulation:
 ```
-#./run.sh start koth_0
+#./run.sh start wlan0
 
   _  _____ _____ _  _     _   ___ 
  | |/ / _ \_   _| || |   /_\ | _ 
@@ -75,10 +75,10 @@ The <i>run.sh</i> script is all that is needed to start and stop the simulation.
 Do you want to play a game...
 
 [+] Docker seems to be installed and started
-[+] Stopping koth
-[+] Removing koth
-[+] Removing IP address in koth_0
-[+] Interface koth_0 supports set_wiphy_netns
+[+] Stopping koth_wlan0
+[+] Removing koth_wlan0
+[+] Removing IP address in wlan0
+[+] Interface wlan0 supports set_wiphy_netns
 .
 .
 .
@@ -87,7 +87,7 @@ Do you want to play a game...
 
 To stop the simulation:
 ```
-# ./run.sh stop koth_0
+# ./run.sh stop wlan0
 
   _  _____ _____ _  _     _   ___ 
  | |/ / _ \_   _| || |   /_\ | _ 
@@ -97,15 +97,15 @@ To stop the simulation:
 Do you want to play a game...
 
 [+] Docker seems to be installed and started
-[+] Stopping koth
-[+] Removing koth
-[+] Removing IP address in koth_0
+[+] Stopping koth_wlan0
+[+] Removing koth_wlan0
+[+] Removing IP address in wlan0
 ```
 
 # Display Team Score
 To run a continuous display of the team scores just run the following outside the running docker instance.
 ```
-> watch "docker exec -it -t koth cat /var/www/html/cgi-bin/teams.txt | sort | uniq -c"
+> watch "docker exec -it -t koth_wlan0 cat /var/www/html/cgi-bin/teams.txt | sort | uniq -c"
 
       2 blunderbuss
       1 others
