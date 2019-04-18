@@ -24,16 +24,12 @@ BASE_DIR=/var/www/html/cgi-bin
 mkdir $BASE_DIR/conf 2> /dev/null
 mkdir $BASE_DIR/log 2> /dev/null
 
-CHANNELS="1 2 3 4 5 6 7 8 9 10 11"
-HW_MODE=g
-`iwlist $INTERFACE freq | grep -E "Channel.*: 5\." > /dev/null`
-if [[ $? -eq 0 ]]; then
-    # Just use some channels from 802.11a
-    CHANNELS="${CHANNELS} 36 40 44"
-fi
+PHY=$(cat /sys/class/net/$INTERFACE/phy80211/name)
+CHANNELS=$(iw phy $PHY info | sed -n '/Frequencies/,/^\s*Supported commands:\s*$/{//!p}' | grep -vE "disabled|IR" | grep -oP '\[\K[^]]+' | awk 'BEGIN {ORS=" "} {print}')
 
+HW_MODE=g
 CHANNEL=$(shuf -n 1 -e $CHANNELS)
-if [[ $CHANNEL -gt 11 ]]; then
+if [[ $CHANNEL -gt 14 ]]; then
     HW_MODE=a
 fi
 

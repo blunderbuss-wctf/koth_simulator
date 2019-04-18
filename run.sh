@@ -115,14 +115,9 @@ function init() {
     fi
     echo -e "[+] Interface ${GREEN}$IFACE${NC} supports ${GREEN}set_wiphy_netns${NC}"
 
-    # Show band support
-    local support="2.4"
-    `iwlist $IFACE freq | grep -E "Channel.*: 5\." > /dev/null`
-    if [[ $? -eq 0 ]]
-    then
-        support="$support and 5"
-    fi
-    echo -e "${BLUE}[INFO]${NC} Selected interface supports ${GREEN}$support${NC} bands"
+    # Show channel support (explicitly avoid DFS channels)
+    local channels=$(iw phy $phy info | sed -n '/Frequencies/,/^\s*Supported commands:\s*$/{//!p}' | grep -vE "disabled|IR" | grep -oP '\[\K[^]]+' | awk 'BEGIN {ORS=" "} {print}')
+    echo -e "${BLUE}[INFO]${NC} Will randomly select from channels ${GREEN}$channels${NC}"
 
     # Check that the given interface is not used by the host as the default route
     if [[ $(ip r | grep default | cut -d " " -f5) == "$IFACE" ]]
