@@ -6,6 +6,7 @@ trap stop TERM
 function stop() {
     echo "Received SIGTERM!"
     kill -TERM $PID
+    supervisorctl stop ap
     rm $BASE_DIR/conf/dhcp.conf
     rm $BASE_DIR/log/dhcp.leases
 }
@@ -34,6 +35,13 @@ no-resolv
 no-hosts
 EOF
 
+ifconfig $INTERFACE down
+
+echo "Starting dnsmasq support for ${INTERFACE}"
+
+ifconfig $INTERFACE up $IP
+
 dnsmasq -k -C $BASE_DIR/conf/dhcp.conf &
 PID=$!
+supervisorctl start ap
 wait $PID
