@@ -26,6 +26,7 @@ COPY content/dnsmasq.sh /var/www/html/cgi-bin/dnsmasq.sh
 COPY content/www.conf /etc/php/7.0/fpm/pool.d/www.conf
 
 RUN mkdir -p /var/www/html/cgi-bin/log
+RUN mkdir -p /var/www/html/cgi-bin/conf
 
 RUN mkdir -p /run/php && \
     chown -R www-data:www-data /var/www/html && \

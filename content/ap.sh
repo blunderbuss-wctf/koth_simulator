@@ -21,9 +21,6 @@ IP=$3
 
 BASE_DIR=/var/www/html/cgi-bin
 
-mkdir $BASE_DIR/conf 2> /dev/null
-mkdir $BASE_DIR/log 2> /dev/null
-
 PHY=$(cat /sys/class/net/$INTERFACE/phy80211/name)
 CHANNELS=$(iw phy $PHY info | sed -n '/Frequencies/,/^\s*Supported commands:\s*$/{//!p}' | grep -vE "disabled|IR" | grep -oP '\[\K[^]]+' | awk 'BEGIN {ORS=" "} {print}')
 

@@ -14,9 +14,6 @@ BASE_DIR=/var/www/html/cgi-bin
 INTERFACE=$1
 IP=$2
 
-mkdir $BASE_DIR/conf 2> /dev/null
-mkdir $BASE_DIR/log 2> /dev/null
-
 IFS=. read oc1 oc2 oc3 oc4 <<< $IP
 
 LOG_FILE=$BASE_DIR/log/dnsmasq.log
