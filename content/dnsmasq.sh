@@ -40,6 +40,7 @@ ifconfig $INTERFACE down
 echo "Starting dnsmasq support for ${INTERFACE}"
 
 ifconfig $INTERFACE up $IP
+sleep 1
 
 dnsmasq -k -C $BASE_DIR/conf/dhcp.conf &
 PID=$!
