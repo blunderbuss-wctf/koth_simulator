@@ -10,19 +10,19 @@ The code in this repo is just a very poor attempt at a simulation of this KOTH g
 
 Docker is being used here to help avoid conflicts with the local running system (webserver, network, ...). The install instructions are fairly generic which should allow the simulation to run on most hosts.
 
-Arch Linux x86_64
+Arch Linux - x86_64
 ```
 pacman -S docker
 systemctl start docker
 ```
 
-Ubuntu 16.04 x86_64
+Ubuntu 16.04 - x86_64
 ```
 apt-get install docker
 systemctl start docker
 ```
 
-Ubuntu 18.04 x86_64
+Ubuntu 18.04 - x86_64
 ```
 sudo apt-get remove docker docker-engine docker.io containerd runc
 
@@ -45,7 +45,16 @@ sudo apt-get update
 sudo apt-get install docker-ce docker-ce-cli containerd.io
 ```
 
-Kali on RPi 3 aarch64
+Kali on RPi 3 model B - aarch64
+```
+curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
+echo 'deb https://download.docker.com/linux/debian stretch stable' > /etc/apt/sources.list.d/docker.list
+apt-get update 
+apt-get remove docker docker-engine docker.io
+apt-get install docker-ce
+```
+
+Raspbian on RPi 3 model B+ - armv7l
 ```
 curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
 echo 'deb https://download.docker.com/linux/debian stretch stable' > /etc/apt/sources.list.d/docker.list
