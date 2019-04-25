@@ -79,6 +79,9 @@ then
 elif [[ $ARCH == "aarch64" ]]
 then
     DOCKER_BUILDFILE=build/Dockerfile_aarch64
+elif [[ $ARCH == "armv7l" ]]
+then
+    DOCKER_BUILDFILE=build/Dockerfile_armv7l
 else
     echo -e "${RED}[ERROR]${NC} $ARCH not presently supported. Exiting..."
     exit 1

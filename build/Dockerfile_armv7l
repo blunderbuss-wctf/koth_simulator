@@ -1,0 +1,40 @@
+FROM ubuntu:16.04
+ 
+RUN apt-get update
+RUN apt-get install -y apt-utils wireless-tools
+RUN apt-get install -y nginx php7.0-fpm supervisor iw
+RUN DEBIAN_FRONTEND='noninteractive' apt-get install -y nano macchanger dnsmasq hostapd net-tools
+
+RUN rm -rf /var/lib/apt/lists/*
+
+ENV nginx_vhost /etc/nginx/sites-available/default
+ENV php_conf /etc/php/7.0/fpm/php.ini
+ENV nginx_conf /etc/nginx/nginx.conf
+ENV supervisor_conf /etc/supervisor/supervisord.conf
+
+COPY content/default ${nginx_vhost}
+RUN sed -i -e 's/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g' ${php_conf} && echo "\ndaemon off;" >> ${nginx_conf}
+ 
+COPY content/supervisord.conf ${supervisor_conf}
+ 
+COPY content/index.html /var/www/html/index.html
+COPY content/score.php /var/www/html/cgi-bin/score.php
+COPY content/revert_mac.sh /var/www/html/cgi-bin/revert_mac.sh
+COPY content/lock.txt /var/www/html/cgi-bin/lock.txt
+COPY content/ap.sh /var/www/html/cgi-bin/ap.sh
+COPY content/dnsmasq.sh /var/www/html/cgi-bin/dnsmasq.sh
+COPY content/www.conf /etc/php/7.0/fpm/pool.d/www.conf
+
+RUN mkdir -p /var/www/html/cgi-bin/log
+RUN mkdir -p /var/www/html/cgi-bin/conf
+
+RUN mkdir -p /run/php && \
+    chown -R www-data:www-data /var/www/html && \
+    chown -R www-data:www-data /run/php
+
+COPY content/start.sh /start.sh
+RUN chmod 755 /start.sh
+ENTRYPOINT ["/start.sh"]
+CMD []
+ 
+EXPOSE 80 443
