@@ -1,4 +1,8 @@
 KOTH_SSID=WCTF_KingOfTheHill
 KOTH_IP=172.16.100.1
+
 # Must be absolute path to the file
 #KOTH_SCOREBOARD=/home/zombie/koth_simulator/scoreboards/bsides_charm.txt
+
+# Only select 5GHz channels
+#KOTH_FIVEGHZ=1

@@ -3,6 +3,7 @@
 KOTH_SSID="WCTF_KingOfTheHill"
 KOTH_IP="172.16.100.1"
 KOTH_SCOREBOARD="<not set>"
+KOTH_FIVEGHZ="0"
 
 MAGENTA='\e[0;35m'
 RED='\e[0;31m'
@@ -120,7 +121,7 @@ function init() {
 
     # Show channel support (explicitly avoid DFS channels)
     local channels=$(iw phy $phy info | sed -n '/Frequencies/,/^\s*Supported commands:\s*$/{//!p}' | grep -vE "disabled|IR" | grep -oP '\[\K[^]]+' | awk 'BEGIN {ORS=" "} {print}')
-    echo -e "${BLUE}[INFO]${NC} Will randomly select from channels ${GREEN}$channels${NC}"
+    echo -e "[+] Interface supports channels ${GREEN}$channels${NC}"
 
     # Check that the given interface is not used by the host as the default route
     if [[ $(ip r | grep default | cut -d " " -f5) == "$IFACE" ]]
@@ -151,16 +152,29 @@ function init() {
                     KOTH_IP=${value//\"/};;
                 "KOTH_SCOREBOARD" )
                     KOTH_SCOREBOARD=${value//\"/};;
+                "KOTH_FIVEGHZ" )
+                    KOTH_FIVEGHZ=${value//\"/};;
                 * )
                     echo -e "Parameter $name in $CONF_FILE not recognized"
             esac
         done < "$CONF_FILE"
     fi
 
+    if [[ $KOTH_FIVEGHZ -eq "1" ]]; then
+        channels=$(echo $channels | awk 'BEGIN {ORS=" " }; {for(i =1; i <= NF; i++) {if($i > 14) print $i;}}')
+    fi
+
     echo -e "${BLUE}[INFO]${NC} WLAN parameters:"
     echo -e "${BLUE}[INFO]${NC} SSID: ${MAGENTA}$KOTH_SSID${NC}"
     echo -e "${BLUE}[INFO]${NC} IP: ${MAGENTA}$KOTH_IP${NC}"
     echo -e "${BLUE}[INFO]${NC} SCOREBOARD: ${MAGENTA}$KOTH_SCOREBOARD${NC}"
+    echo -e "${BLUE}[INFO]${NC} 5GHz ONLY: ${MAGENTA}$KOTH_FIVEGHZ${NC}"
+    echo -e "${BLUE}[INFO]${NC} USING CHANNELS: ${MAGENTA}$channels${NC}"
+
+    if [[ -z "$channels" ]]; then
+        echo -e "${RED}[ERROR]${NC} No channels selected for use. Did you mistakenly set KOTH_FIVEGHZ?"
+        exit 1
+    fi
 
     # Avoid cross-device link error with building?
     if [[ -e /sys/module/overlay/parameters/metacopy ]]
@@ -186,9 +200,9 @@ function start() {
 
     if [[ $KOTH_SCOREBOARD != "<not set>" ]]
     then
-        docker run -dt --name $DOCKER_NAME --net=bridge --cap-add=NET_ADMIN --cap-add=NET_RAW -v ${KOTH_SCOREBOARD}:${TARGET_SCORE} $DOCKER_IMAGE $IFACE $KOTH_SSID $KOTH_IP
+        docker run -dt --name $DOCKER_NAME --net=bridge --cap-add=NET_ADMIN --cap-add=NET_RAW -v ${KOTH_SCOREBOARD}:${TARGET_SCORE} $DOCKER_IMAGE $IFACE $KOTH_SSID $KOTH_IP $KOTH_FIVEGHZ
     else
-        docker run -dt --name $DOCKER_NAME --net=bridge --cap-add=NET_ADMIN --cap-add=NET_RAW $DOCKER_IMAGE $IFACE $KOTH_SSID $KOTH_IP
+        docker run -dt --name $DOCKER_NAME --net=bridge --cap-add=NET_ADMIN --cap-add=NET_RAW $DOCKER_IMAGE $IFACE $KOTH_SSID $KOTH_IP $KOTH_FIVEGHZ
     fi
 
     if [[ $? -ne 0 ]]
