@@ -75,6 +75,7 @@ The <i>wlan_config.txt</i> file allows a few runtime parameters to be set during
 * KOTH_SSID: The broadcasted ssid of the KOTH ap. Defaults to WCTF_KingOfTheHill
 * KOTH_IP: The landing address for team scoring. Defaults to 172.16.100.1
 * KOTH_SCOREBOARD: An absolute path to a file which holds the scoreboard. The supplied file is bind mounted inside the container which will persist beyond the lifetime of the container. The file will exist at <i>/var/www/html/cgi-bin/teams.txt</i> inside the container. If this value is not set then scores will still be recorded to <i>/var/www/html/cgi-bin/teams.txt</i> however all scores will be <b>lost</b> once the container is stopped.
+* KOTH_FIVEGHZ: Only use channels on the 5GHz band for the selected interface. Defaults to 0. If this option is selected (set to 1) then be sure your adapter supports from the 5s.
 
 # Running
 
