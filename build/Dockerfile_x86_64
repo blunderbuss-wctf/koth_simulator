@@ -36,5 +36,3 @@ COPY content/start.sh /start.sh
 RUN chmod 755 /start.sh
 ENTRYPOINT ["/start.sh"]
 CMD []
- 
-EXPOSE 80 443
