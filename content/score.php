@@ -7,9 +7,9 @@ if (flock($fp, LOCK_EX)) {
    // gzip for this request... data gets sent back to the user right away
    header('X-Accel-Buffering: no');
 
-   file_put_contents("teams.txt", $_GET['team_name']."\n", FILE_APPEND | LOCK_EX);
+   file_put_contents("teams.txt", $_GET['team_name']." ".time()."\n", FILE_APPEND | LOCK_EX);
 
-   $scores = nl2br(shell_exec("cat teams.txt | sort | uniq -c"));
+   $scores = nl2br(shell_exec("cat teams.txt | awk '{print $1}' | sort | uniq -c"));
 
 $t = <<<EX
 <html>
