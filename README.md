@@ -128,6 +128,10 @@ As an administrator of the KOTH game you can run a continuous display of the tea
       2 blunderbuss
       1 others
 ```
+The stats directory also contains a script which will present a tmux dashboard for game administration and display. If you have tmux installed execute the stats/tmux_stats.sh script.
+```
+> ./stats/tmux_stats.sh wlan0
+```
 
 # Handy Docker Commands
 * docker exec -it -t koth_wlan0 /bin/bash
