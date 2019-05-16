@@ -1,7 +1,7 @@
 FROM ubuntu:16.04
  
 RUN apt-get update
-RUN apt-get install -y apt-utils wireless-tools
+RUN apt-get install -y apt-utils wireless-tools gawk
 RUN apt-get install -y nginx php7.0-fpm supervisor iw
 RUN DEBIAN_FRONTEND='noninteractive' apt-get install -y nano macchanger dnsmasq hostapd net-tools
 
