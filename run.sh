@@ -111,7 +111,7 @@ function init() {
     local phy=$(cat /sys/class/net/$IFACE/phy80211/name)
 
     # Check that the given interface supports AP interface mode
-    $(iw phy $phy info | grep -E "\* AP\s*$")
+    $(iw phy $phy info | grep -qE "\* AP\s*$")
     if [[ $? -eq 1 ]]
     then
         echo -e "${RED}[ERROR]${NC} $IFACE does not support AP interface mode. Exiting!"
