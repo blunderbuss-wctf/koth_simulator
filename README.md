@@ -69,6 +69,10 @@ Aside from only presently supporting a few hosts, the selected nic to use for th
 ```
 iw phy phy<#> info | grep set_wiphy_netns 
 ```
+The adapter must also support AP interface mode. The run.sh script does an explicit check of this condition. You can also check the device itself with:
+```
+iw phy phy<#> info | grep -E "\* AP\s*$"
+```
 
 # Configuring the build
 The <i>wlan_config.txt</i> file allows a few runtime parameters to be set during the build. All parameters are optional with the build providing sensible defaults otherwise:
@@ -94,11 +98,25 @@ Do you want to play a game...
 [+] Stopping koth_wlan0
 [+] Removing koth_wlan0
 [+] Removing IP address in wlan0
+[+] Interface wlan0 supports AP interface mode
 [+] Interface wlan0 supports set_wiphy_netns
-.
-.
-.
-.
+[+] Interface supports channels 1 2 3 4 5 6 7 8 9 10 11 12 13 149 153 157 161 165 
+[INFO] Found WLAN config file: wlan_config.txt
+[INFO] WLAN parameters:
+[INFO] SSID: WCTF_KingOfTheHill
+[INFO] IP: 172.16.100.1
+[INFO] SCOREBOARD: <not set>
+[INFO] 5GHz ONLY: 0
+[INFO] USING CHANNELS: 1 2 3 4 5 6 7 8 9 10 11 12 13 149 153 157 161 165 
+[+] Building the image koth_simulation...(this might take some time)
+sha256:80879b0478e75ac8fb0bb2464ef3a8dea31d8df9506bdc58485ecef3b1e80cdd
+[+] Bringing up wlan0
+[+] Starting the docker container with name koth_wlan0
+4e074f75fc9b6ad52a660a2eb170157f62e4863bd6667d87175664b4761a406d
+[+] Configuring wlan0 with IP address 192.168.7.1
+[+] Adding natting rule to iptables (container)
+[+] Enabling IP forwarding (container)
+[!] Started WCTF KOTH Simulation in container koth_wlan0
 ```
 
 To stop the simulation:
@@ -116,14 +134,15 @@ Do you want to play a game...
 [+] Stopping koth_wlan0
 [+] Removing koth_wlan0
 [+] Removing IP address in wlan0
+[!] Removed koth_wlan0
 ```
 
-# Display Team Score
+# Administration & Display
 As a team competing to score, once you've submitted your team name you'll get a response page which will acknowledge that the KOTH ap is being locked and also return all the team scores. 
 
 As an administrator of the KOTH game you can run a continuous display of the team scores by running the following command on your host. Or if you've decided to use the KOTH_SCOREBOARD config option you can just sort that file directly on your host.
 ```
-> watch "docker exec -it -t koth_wlan0 cat /var/www/html/cgi-bin/teams.txt | sort | uniq -c"
+> watch "docker exec -it -t koth_wlan0 cat /var/www/html/cgi-bin/teams.txt | cut -d ' ' -f2- | sort | uniq -c"
 
       2 blunderbuss
       1 others
