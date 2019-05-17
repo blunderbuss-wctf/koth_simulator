@@ -84,7 +84,7 @@ elif [[ $ARCH == "armv7l" ]]
 then
     DOCKER_BUILDFILE=build/Dockerfile_armv7l
 else
-    echo -e "${RED}[ERROR]${NC} $ARCH not presently supported. Exiting..."
+    echo -e "${RED}[ERROR]${NC} $ARCH not presently supported. Exiting!"
     exit 1
 fi
 
@@ -103,18 +103,27 @@ function init() {
     # Check that the requested iface is available
     if ! [ -e /sys/class/net/$IFACE ]
     then
-        echo -e "${RED}[ERROR]${NC} The interface provided does not exist. Exiting..."
+        echo -e "${RED}[ERROR]${NC} The interface provided does not exist. Exiting!"
         exit 1
     fi
 
     # Find the physical interface for the given wireless interface
     local phy=$(cat /sys/class/net/$IFACE/phy80211/name)
 
+    # Check that the given interface supports AP interface mode
+    $(iw phy $phy info | grep -E "\* AP\s*$")
+    if [[ $? -eq 1 ]]
+    then
+        echo -e "${RED}[ERROR]${NC} $IFACE does not support AP interface mode. Exiting!"
+        exit 1
+    fi
+    echo -e "[+] Interface ${GREEN}$IFACE${NC} supports ${GREEN}AP interface mode${NC}"
+
     # Check that the given interface supports netns
     $(iw phy $phy info | grep -q "set_wiphy_netns")
     if [[ $? -eq 1 ]]
     then
-        echo -e "${RED}[ERROR]${NC} The interface $IFACE does not support set_wiphy_netns. Exiting..."
+        echo -e "${RED}[ERROR]${NC} The interface $IFACE does not support set_wiphy_netns. Exiting!"
         exit 1
     fi
     echo -e "[+] Interface ${GREEN}$IFACE${NC} supports ${GREEN}set_wiphy_netns${NC}"
@@ -187,7 +196,7 @@ function init() {
     docker build -q --rm -t $DOCKER_IMAGE -f $DOCKER_BUILDFILE .
     if [[ $? -ne 0 ]]
     then
-        echo -e "${RED}[ERROR]${NC} Error building ${RED}$DOCKER_IMAGE${NC}. Exiting..."
+        echo -e "${RED}[ERROR]${NC} Error building ${RED}$DOCKER_IMAGE${NC}. Exiting!"
         exit 1
     fi
 }
@@ -256,7 +265,7 @@ if [ "$1" == "start" ]
 then
     if [[ -z "$2" ]]
     then
-        echo -e "${RED}[ERROR]${NC} No interface provided. Exiting..."
+        echo -e "${RED}[ERROR]${NC} No interface provided. Exiting!"
         exit 1
     fi
     IFACE=$2
@@ -268,12 +277,13 @@ elif [ "$1" == "stop" ]
 then
     if [[ -z "$2" ]]
     then
-        echo -e "${RED}[ERROR]${NC} No interface provided. Exiting..."
+        echo -e "${RED}[ERROR]${NC} No interface provided. Exiting!"
         exit 1
     fi
     IFACE=$2
     DOCKER_NAME="koth_$IFACE"
     stop
+    echo -e "[!] Removed ${GREEN}$DOCKER_NAME${NC}"
 else
     show_usage
 fi
