@@ -2,7 +2,7 @@
 
 $fp = fopen("lock.txt", "r+");
 
-if (flock($fp, LOCK_EX)) {
+if (flock($fp, LOCK_EX | LOCK_NB)) {
    $team = trim($_GET['team_name']);
 
    // Setting this header instructs Nginx to disable fastcgi_buffering and disable
