@@ -185,6 +185,13 @@ function init() {
         exit 1
     fi
 
+    # If koth scoreboard was provided make sure it exists
+    if [ $KOTH_SCOREBOARD != "<not set>" ] && [ ! -f $KOTH_SCOREBOARD ]
+    then
+        echo -e "${RED}[ERROR]${NC} Scoreboard file ${RED}$KOTH_SCOREBOARD${NC} not found. Exiting!"
+	exit 1
+    fi
+
     # Avoid cross-device link error with building?
     if [[ -e /sys/module/overlay/parameters/metacopy ]]
     then
