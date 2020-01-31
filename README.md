@@ -63,6 +63,18 @@ apt-get remove docker docker-engine docker.io
 apt-get install docker-ce
 ```
 
+Raspbian Buster on RPi 4
+```
+apt-get update
+apt-get upgrade
+reboot
+curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
+echo 'deb https://download.docker.com/linux/debian stretch stable' > /etc/apt/sources.list.d/docker.list
+apt-get update
+apt-get remove docker docker-engine docker.io
+apt install --no-install-recommends docker-ce
+```
+
 # Requirements
 
 Aside from only presently supporting a few hosts, the selected nic to use for the simulation must support <b>set_wiphy_netns</b>. This is because of the network namespacing in use. The run.sh script does an explicit check of this condition. You can also check the device itself with:
