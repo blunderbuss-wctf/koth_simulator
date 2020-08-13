@@ -163,6 +163,7 @@ The stats directory also contains a script which will present a tmux dashboard f
 ```
 > ./stats/tmux_stats.sh wlan0
 ```
+![admin dashboard](pictures/admin.png)
 
 # Handy Docker Commands
 * docker exec -it -t koth_wlan0 /bin/bash
