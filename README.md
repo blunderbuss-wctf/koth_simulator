@@ -85,6 +85,11 @@ The adapter must also support AP interface mode. The run.sh script does an expli
 ```
 iw phy phy<#> info | grep -E "\* AP\s*$"
 ```
+If you don't have adequate harware you can always setup a local environment using mac80211_hwsim and use one of the virtual nics as the KOTH ap and the other nic to test connection.
+```
+# insmod mac80211_hwsim.ko.xz radios=2
+```
+
 
 # Configuring the build
 The <i>wlan_config.txt</i> file allows a few runtime parameters to be set during the build. All parameters are optional with the build providing sensible defaults otherwise:
