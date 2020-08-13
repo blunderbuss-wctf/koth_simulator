@@ -6,3 +6,6 @@ KOTH_IP=172.16.100.1
 
 # Only select 5GHz channels
 #KOTH_FIVEGHZ=1
+
+# Only select 2.4GHz channels
+#KOTH_24GHZ=1

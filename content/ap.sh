@@ -19,6 +19,7 @@ INTERFACE=$1
 SSID=$2
 IP=$3
 ONLY_FIVE=$4
+ONLY_24=$5
 
 BASE_DIR=/var/www/html/cgi-bin
 
@@ -27,6 +28,10 @@ CHANNELS=$(iw phy $PHY info | sed -n '/Frequencies/,/^\s*Supported commands:\s*$
 
 if [[ $ONLY_FIVE -eq "1" ]]; then
     CHANNELS=$(echo $CHANNELS | awk 'BEGIN {ORS=" " }; {for(i =1; i <= NF; i++) {if($i > 14) print $i;}}')
+fi
+
+if [[ $ONLY_24 -eq "1" ]]; then
+    CHANNELS=$(echo $CHANNELS | awk 'BEGIN {ORS=" " }; {for(i =1; i <= NF; i++) {if($i <= 14) print $i;}}')
 fi
 
 HW_MODE=g

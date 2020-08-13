@@ -4,6 +4,7 @@ KOTH_SSID="WCTF_KingOfTheHill"
 KOTH_IP="172.16.100.1"
 KOTH_SCOREBOARD="<not set>"
 KOTH_FIVEGHZ="0"
+KOTH_24GHZ="0"
 
 MAGENTA='\e[0;35m'
 RED='\e[0;31m'
@@ -163,14 +164,12 @@ function init() {
                     KOTH_SCOREBOARD=${value//\"/};;
                 "KOTH_FIVEGHZ" )
                     KOTH_FIVEGHZ=${value//\"/};;
+                "KOTH_24GHZ" )
+                    KOTH_24GHZ=${value//\"/};;
                 * )
                     echo -e "Parameter $name in $CONF_FILE not recognized"
             esac
         done < "$CONF_FILE"
-    fi
-
-    if [[ $KOTH_FIVEGHZ -eq "1" ]]; then
-        channels=$(echo $channels | awk 'BEGIN {ORS=" " }; {for(i =1; i <= NF; i++) {if($i > 14) print $i;}}')
     fi
 
     echo -e "${BLUE}[INFO]${NC} WLAN parameters:"
@@ -178,6 +177,22 @@ function init() {
     echo -e "${BLUE}[INFO]${NC} IP: ${MAGENTA}$KOTH_IP${NC}"
     echo -e "${BLUE}[INFO]${NC} SCOREBOARD: ${MAGENTA}$KOTH_SCOREBOARD${NC}"
     echo -e "${BLUE}[INFO]${NC} 5GHz ONLY: ${MAGENTA}$KOTH_FIVEGHZ${NC}"
+    echo -e "${BLUE}[INFO]${NC} 2.4GHz ONLY: ${MAGENTA}$KOTH_24GHZ${NC}"
+
+    if [ $KOTH_FIVEGHZ -eq "1" ] && [ $KOTH_24GHZ -eq "1" ];
+    then
+        echo -e "${RED}[ERROR]${NC} Both KOTH_FIVEGHZ and KOTH_24GHZ selected. Select only one or none."
+        exit 1
+    fi
+
+    if [[ $KOTH_FIVEGHZ -eq "1" ]]; then
+        channels=$(echo $channels | awk 'BEGIN {ORS=" " }; {for(i =1; i <= NF; i++) {if($i > 14) print $i;}}')
+    fi
+
+    if [[ $KOTH_24GHZ -eq "1" ]]; then
+        channels=$(echo $channels | awk 'BEGIN {ORS=" " }; {for(i =1; i <= NF; i++) {if($i <= 14) print $i;}}')
+    fi
+
     echo -e "${BLUE}[INFO]${NC} USING CHANNELS: ${MAGENTA}$channels${NC}"
 
     if [[ -z "$channels" ]]; then
@@ -216,9 +231,9 @@ function start() {
 
     if [[ $KOTH_SCOREBOARD != "<not set>" ]]
     then
-        docker run -dt --name $DOCKER_NAME --net=bridge --cap-add=NET_ADMIN --cap-add=NET_RAW -v ${KOTH_SCOREBOARD}:${TARGET_SCORE} $DOCKER_IMAGE $IFACE $KOTH_SSID $KOTH_IP $KOTH_FIVEGHZ
+        docker run -dt --name $DOCKER_NAME --net=bridge --cap-add=NET_ADMIN --cap-add=NET_RAW -v ${KOTH_SCOREBOARD}:${TARGET_SCORE} $DOCKER_IMAGE $IFACE $KOTH_SSID $KOTH_IP $KOTH_FIVEGHZ $KOTH_24GHZ
     else
-        docker run -dt --name $DOCKER_NAME --net=bridge --cap-add=NET_ADMIN --cap-add=NET_RAW $DOCKER_IMAGE $IFACE $KOTH_SSID $KOTH_IP $KOTH_FIVEGHZ
+        docker run -dt --name $DOCKER_NAME --net=bridge --cap-add=NET_ADMIN --cap-add=NET_RAW $DOCKER_IMAGE $IFACE $KOTH_SSID $KOTH_IP $KOTH_FIVEGHZ $KOTH_24GHZ
     fi
 
     if [[ $? -ne 0 ]]
